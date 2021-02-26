@@ -3,20 +3,60 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.stock.mgmt;
+package com.mycompany.stock.mgmt ;
+import java.sql.*;
+import com.sun.istack.internal.logging.Logger;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import javax.swing.JOptionPane;
+
+
 
 /**
  *
  * @author yamini
  */
-public class Vendor extends javax.swing.JFrame {
+public class vendor extends javax.swing.JFrame {
 
     /**
      * Creates new form Vendor
      */
-    public Vendor() {
+    public vendor()  {
         initComponents();
+        Connect();
+        
     }
+           Connection con;
+           PreparedStatement pst;
+     
+     public void Connect() {
+        
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+             con =DriverManager.getConnection( "jdbc:mysql://localhost:3306/stockmanagment", "root","1234");
+            
+            
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(vendor.class.getName()).log(Level.SEVERE, null, ex);
+        }catch(SQLException ex){
+            java.util.logging.Logger.getLogger(vendor.class.getName()).log(Level.SEVERE, null, ex);
+        }    
+         
+      }
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -165,7 +205,28 @@ public class Vendor extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        try {
+            String vname = txtvendor.getText();
+            String address= txtaddress.getText();
+            String phone = txtphone.getText();
+            
+            
+            
+     pst = con.prepareStatement("insert into vendor(name,address,phone)values(?,?,?,?)");
+        pst.setString(1,vname);
+        pst.setString(2,address);
+        pst.setString(3,phone);
+         pst.executeUpdate();
+         JOptionPane.showMessageDialog(this,"Vendor Addedddd");
+        
+        txtvendor.setText("");
+        txtaddress.setText("");
+        txtphone.setText("");
+        txtvendor.requestFocus();
+        
+        } catch (SQLException ex) {
+            java.util.logging.Logger.getLogger(vendor.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void txtaddressActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtaddressActionPerformed
@@ -189,20 +250,20 @@ public class Vendor extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Vendor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(vendor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Vendor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(vendor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Vendor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(vendor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Vendor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(vendor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
+        //</editor
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Vendor().setVisible(true);
+                new vendor().setVisible(true);
             }
         });
     }
