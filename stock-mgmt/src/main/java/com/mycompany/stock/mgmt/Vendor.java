@@ -10,9 +10,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 
 
@@ -28,11 +30,12 @@ public class vendor extends javax.swing.JFrame {
     public vendor()  {
         initComponents();
         Connect();
+        load();
         
     }
            Connection con;
            PreparedStatement pst;
-     
+           DefaultTableModel df;
 
 // Database Connect 
      public void Connect() {
@@ -50,10 +53,40 @@ public class vendor extends javax.swing.JFrame {
          
       }
 
+    public  void load()
+    {
+        int a;
+        try {
+            pst= con.prepareStatement ("select * from vendor");
+            ResultSet rs = pst.executeQuery();
+            
+            ResultSetMetaData rd = rs.getMetaData();
+            a = rd.getColumnCount();
+            df = (DefaultTableModel)jTable1.getModel();
+            df.setRowCount(0);
+            
+            while (rs.next()){
+                Vector v2 = new Vector();
+                for(int i = 1;i<=a;i++)
+                {
+                    v2.add(rs.getString("Vendorid"));
+                    v2.add(rs.getString("Name"));  
+                    v2.add(rs.getString("Address"));
+                    v2.add(rs.getString("Phone"));
+                }
+                df.addRow(v2);
+            }
+            
+            
+            
+        } catch (SQLException ex) {
+            java.util.logging.Logger.getLogger(vendor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     
     
-    
-    
+  
     
     
     
@@ -257,6 +290,7 @@ public class vendor extends javax.swing.JFrame {
         txtphone.setText("");
         txtaddress.setText("");
         txtvendor.requestFocus();
+        load();
         
         } catch (SQLException ex) {
             java.util.logging.Logger.getLogger(vendor.class.getName()).log(Level.SEVERE, null, ex);
