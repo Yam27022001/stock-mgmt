@@ -11,6 +11,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 
 
@@ -32,6 +33,8 @@ public class vendor extends javax.swing.JFrame {
            Connection con;
            PreparedStatement pst;
      
+
+// Database Connect 
      public void Connect() {
         
         try {
@@ -72,8 +75,8 @@ public class vendor extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         txtvendor = new javax.swing.JTextField();
-        txtphone = new javax.swing.JTextField();
         txtaddress = new javax.swing.JTextField();
+        txtphone = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
@@ -100,6 +103,12 @@ public class vendor extends javax.swing.JFrame {
             }
         });
 
+        txtphone.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtphoneActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -112,8 +121,8 @@ public class vendor extends javax.swing.JFrame {
                     .addComponent(jLabel3))
                 .addGap(68, 68, 68)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtaddress, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
-                    .addComponent(txtphone)
+                    .addComponent(txtphone, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
+                    .addComponent(txtaddress)
                     .addComponent(txtvendor))
                 .addContainerGap(60, Short.MAX_VALUE))
         );
@@ -126,11 +135,11 @@ public class vendor extends javax.swing.JFrame {
                     .addComponent(txtvendor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(49, 49, 49)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtphone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtaddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
                 .addGap(49, 49, 49)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtaddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtphone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addContainerGap(91, Short.MAX_VALUE))
         );
@@ -206,28 +215,57 @@ public class vendor extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         try {
-            String vname = txtvendor.getText();
-            String address= txtaddress.getText();
-            String phone = txtphone.getText();
+            String Name = txtvendor.getText();
+           // validation of name 
+            if(isWord(Name))  
+         {
+             JOptionPane.showMessageDialog(this,"Valid Name");
+         }    
+         else{
+            JOptionPane.showMessageDialog(this,"Invalid Name"); 
+         }   
+            //validation of address
+            String Address= txtaddress.getText();
+              if(isChar(Address))  
+         {
+             JOptionPane.showMessageDialog(this,"Valid Address");
+         }    
+         else{
+            JOptionPane.showMessageDialog(this,"Invalid Address"); 
+         }   
             
+            // validation of phone
+            String Phone = txtphone.getText();
+         if(isNumber(Phone))  
+         {
+             JOptionPane.showMessageDialog(this,"Valid Phoneno.");
+         }    
+         else{
+            JOptionPane.showMessageDialog(this,"Invalid Phoneno."); 
+         }      
             
-            
-     pst = con.prepareStatement("insert into vendor(name,address,phone)values(?,?,?,?)");
-        pst.setString(1,vname);
-        pst.setString(2,address);
-        pst.setString(3,phone);
-         pst.executeUpdate();
-         JOptionPane.showMessageDialog(this,"Vendor Addedddd");
+        
+        pst = con.prepareStatement("insert into vendor(name,address,phone)values(?,?,?)");
+        pst.setString(1,Name);
+        pst.setString(2,Address);
+        pst.setString(3,Phone);
+        pst.executeUpdate();
+        
+       JOptionPane.showMessageDialog(this,"Vendor Addedddd");
         
         txtvendor.setText("");
-        txtaddress.setText("");
         txtphone.setText("");
+        txtaddress.setText("");
         txtvendor.requestFocus();
         
         } catch (SQLException ex) {
             java.util.logging.Logger.getLogger(vendor.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtphoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtphoneActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtphoneActionPerformed
 
     private void txtaddressActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtaddressActionPerformed
         // TODO add your handling code here:
@@ -283,4 +321,35 @@ public class vendor extends javax.swing.JFrame {
     private javax.swing.JTextField txtphone;
     private javax.swing.JTextField txtvendor;
     // End of variables declaration//GEN-END:variables
-}
+
+    private boolean isWord(String Name) {
+        return Pattern.matches("[a-zA-Z]",Name); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private boolean isNumber(String Phone) 
+    {
+        try
+        {
+            Integer.parseInt(Phone);
+            return true;
+        }
+        catch(Exception  E)
+        {
+           return false;     
+        }       
+    }
+
+    private boolean isChar(String Address) {
+           try
+        {
+            Integer.parseInt(Address);
+            return true;
+        }
+        catch(Exception  E)
+        {
+           return false;     
+        }       //To change body of generated methods, choose Tools | Templates.
+    }
+} //To change body of generated methods, choose Tools | Templates.
+                
+
