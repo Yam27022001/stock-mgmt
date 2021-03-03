@@ -84,16 +84,6 @@ public class vendor extends javax.swing.JFrame {
         }
     }
 
-    
-    
-  
-    
-    
-    
-    
-    
-    
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -103,6 +93,7 @@ public class vendor extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jButton4 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -116,6 +107,10 @@ public class vendor extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jLabel4 = new javax.swing.JLabel();
+        jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
+
+        jButton4.setText("jButton4");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -185,8 +180,18 @@ public class vendor extends javax.swing.JFrame {
         });
 
         jButton2.setText("DELETE");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("EDIT");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -196,30 +201,52 @@ public class vendor extends javax.swing.JFrame {
                 "Vendor Id", "Name", "Address", "Phone"
             }
         ));
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel4.setText("Vendor");
+
+        jButton5.setText("Cancel");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
+        jButton6.setText("Close");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(19, 19, 19)
                         .addComponent(jButton1)
-                        .addGap(30, 30, 30)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton2)
-                        .addGap(26, 26, 26)
-                        .addComponent(jButton3)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton6)))
+                .addContainerGap(89, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -238,7 +265,9 @@ public class vendor extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2)
-                    .addComponent(jButton3))
+                    .addComponent(jButton3)
+                    .addComponent(jButton5)
+                    .addComponent(jButton6))
                 .addContainerGap(47, Short.MAX_VALUE))
         );
 
@@ -276,8 +305,6 @@ public class vendor extends javax.swing.JFrame {
          else{
             JOptionPane.showMessageDialog(this,"Invalid Phoneno."); 
          }      
-            
-        
         pst = con.prepareStatement("insert into vendor(name,address,phone)values(?,?,?)");
         pst.setString(1,Name);
         pst.setString(2,Address);
@@ -304,6 +331,104 @@ public class vendor extends javax.swing.JFrame {
     private void txtaddressActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtaddressActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtaddressActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+    df =(DefaultTableModel)jTable1.getModel();
+        
+        // click operation on table
+        int selected = jTable1.getSelectedRow();
+        int Vendorid =  Integer.parseInt(df.getValueAt (selected, 0).toString());
+         txtvendor.setText(df.getValueAt(selected, 1).toString());
+         txtaddress.setText(df.getValueAt(selected, 2).toString());
+         txtphone.setText(df.getValueAt(selected, 3).toString());
+         
+         
+         jButton1.setEnabled(false);
+             
+        
+        
+    }//GEN-LAST:event_jTable1MouseClicked
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+         df =(DefaultTableModel)jTable1.getModel();                                // edit code
+         int selected = jTable1.getSelectedRow();
+         int Vendorid =  Integer.parseInt(df.getValueAt (selected, 0).toString());
+         String Name = txtvendor.getText();
+         String Address= txtaddress.getText();
+         String Phone = txtphone.getText();
+         try {
+         pst = con.prepareStatement("update vendor set Name = ?, Address =?, Phone =? where Vendorid = ?");
+         pst.setString(1,Name);
+         pst.setString(2,Address);
+         pst.setString(3,Phone);
+         pst.setInt(4,Vendorid);
+         pst.executeUpdate();
+        
+       JOptionPane.showMessageDialog(this,"Vendor Updated");
+        
+        txtvendor.setText("");
+        txtphone.setText("");
+        txtaddress.setText("");
+        txtvendor.requestFocus();
+        load();
+        jButton1.setEnabled(true);
+           
+        } catch (SQLException ex) {
+         java.util.logging.Logger.getLogger(vendor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      
+        
+        
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        df =(DefaultTableModel)jTable1.getModel();                                
+         int selected = jTable1.getSelectedRow();
+         int Vendorid =  Integer.parseInt(df.getValueAt (selected, 0).toString());
+      
+         try {
+         pst = con.prepareStatement("delete from vendor  where Vendorid =?");
+      
+         pst.setInt(1,Vendorid);
+         pst.executeUpdate();
+        
+       JOptionPane.showMessageDialog(this,"Vendor Deleted");
+        
+        txtvendor.setText("");
+        txtphone.setText("");
+        txtaddress.setText("");
+        txtvendor.requestFocus();
+        load();
+        jButton1.setEnabled(true);
+           
+         } catch (SQLException ex) {
+            java.util.logging.Logger.getLogger(vendor.class.getName()).log(Level.SEVERE, null, ex);
+         }
+        
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        txtvendor.setText("");
+        txtphone.setText("");
+        txtaddress.setText("");
+        txtvendor.requestFocus();
+        load();
+        jButton1.setEnabled(true);
+           
+        
+        
+        
+        
+        
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        // TODO add your handling code here:
+        this.setVisible(false);
+    }//GEN-LAST:event_jButton6ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -344,6 +469,9 @@ public class vendor extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
