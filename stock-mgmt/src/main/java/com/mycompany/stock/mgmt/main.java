@@ -51,6 +51,11 @@ public class main extends javax.swing.JFrame {
         });
 
         jButton5.setText("Purchase");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         jButton1.setText("Sales");
 
@@ -124,6 +129,12 @@ public class main extends javax.swing.JFrame {
          p.setVisible(true);
         
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        purchase p1 = new purchase();
+        p1.setVisible(true);
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     /**
      * @param args the command line arguments
