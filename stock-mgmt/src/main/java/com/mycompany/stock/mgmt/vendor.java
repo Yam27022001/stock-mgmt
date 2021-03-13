@@ -5,7 +5,7 @@
  */
 package com.mycompany.stock.mgmt ;
 import java.sql.*;
-import com.sun.istack.internal.logging.Logger;
+// import com.sun.istack.internal.logging.Logger;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
