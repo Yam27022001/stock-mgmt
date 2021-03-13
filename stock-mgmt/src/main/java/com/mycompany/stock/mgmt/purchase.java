@@ -195,7 +195,7 @@ public  void purchase(){                                             // total fo
               
             }
             
-            String query3 = "update product set qty = qty+ ? wnere barcode = ?" ;
+            String query3 = "update product set qty = qty + ? where barcode = ?" ;
              pst2 = con.prepareStatement(query3);
              
              for(int i = 0; i<jTable1.getRowCount();i++) 
@@ -207,6 +207,8 @@ public  void purchase(){                                             // total fo
                  
                  pst2.setString(1,qty);
                  pst2.setString(2, productid);
+                 System.out.println(qty);
+                 System.out.println(productid);
                  pst2.executeUpdate();
             }
             
