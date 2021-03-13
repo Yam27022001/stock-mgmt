@@ -5,7 +5,8 @@
  */
 package com.mycompany.stock.mgmt;
 
-import com.sun.glass.events.KeyEvent;
+// import com.sun.glass.events.KeyEvent;
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
