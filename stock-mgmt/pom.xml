@@ -41,6 +41,11 @@
             <version>5.6.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>123</groupId>
+            <artifactId>123</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
   <build>
     <plugins>

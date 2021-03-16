@@ -5,38 +5,37 @@
  */
 package com.mycompany.stock.mgmt;
 
-// import com.sun.glass.events.KeyEvent;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.sql.Statement;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  *
  * @author yamini
  */
-public class purchase extends javax.swing.JFrame {
+public class sales extends javax.swing.JFrame {
 
     /**
-     * Creates new form purchase
+     * Creates new form sales
      */
-    public purchase() {
+    public sales() {
         initComponents();
         Connect();
-        Vendor();
-    
+        
     }
-       Connection con;
+    
+    
+    Connection con;
            PreparedStatement pst;
            PreparedStatement pst1;
            PreparedStatement pst2;
@@ -58,27 +57,10 @@ public class purchase extends javax.swing.JFrame {
         }    
          
       }
-
-public void Vendor(){                                          // take the name of vendor from vendor table 
-        try {
-            
-            pst = con.prepareStatement ("select Distinct name from vendor") ;
-            rs = pst.executeQuery();
-            txtvendor.removeAllItems();
-            
-            while(rs.next()){
-                txtvendor.addItem(rs.getString("Name"));
-            }
-            
-            
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(purchase.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    
-}
-
-public void barcode(){                                       // take barcode from product table anf check if the barcode  works  fine or not
+     
+     
+     
+     public void barcode(){                                       // take barcode from product table anf check if the barcode  works  fine or not
   
    
         try {
@@ -112,58 +94,92 @@ public void barcode(){                                       // take barcode fro
         }
    
 }
-  
+     
+     
+     
+     
+     
+     public  void sales(){            
+         
+        try {
+            String pcode = txtpcode.getText();
+            
+            
+            pst = con.prepareStatement("select * from product where barcode = ?");
+            pst.setString (1,pcode);
+            rs = pst.executeQuery();
+            while(rs.next())
+            {
+                int currentqty;
+                currentqty = rs.getInt("qty");
+                int price = Integer.parseInt(txtprice.getText());
+                int qty = Integer.parseInt(txtqty.getText());
+                int tot = price *qty;
+                
+                
+                if(qty >= currentqty){
+                    JOptionPane.showMessageDialog(this, "Qty Not Enough.....");
+                }
+                
+                else{
+                    df = (DefaultTableModel)jTable1.getModel();
+                   df.addRow(new Object[]
+                  {
+                   txtpcode.getText(),
+                   txtpname.getText(),
+                   txtprice.getText(),
+                   txtqty.getText(),
+                   tot
+                   });
 
-public  void purchase(){                                             // total for the table
-     int price = Integer.parseInt(txtprice.getText());
-     int qty = Integer.parseInt(txtqty.getText());
-     
-     int tot = price * qty;
-     
-     df = (DefaultTableModel)jTable1.getModel();
-     df.addRow(new Object[]
-             {
-         txtpcode.getText(),
-         txtpname.getText(),
-         txtprice.getText(),
-         txtqty.getText(),
-         tot
-     });
-     
-     
-     int sum = 0;
-     for(int i =0; i<jTable1.getRowCount();i++)          //
-     {
-         sum = sum + Integer.parseInt(jTable1.getValueAt(i,4).toString());
-     }
-     
-     txttcost.setText(String.valueOf(sum));
-     
-      txtpcode.setText("");
-      txtpname.setText("");
-      txtprice.setText(""); 
-      txtqty.setText("");
+                }
+            }
+            
+            
+            
+// total for the table
+
+
+
+int sum = 0;
+for(int i =0; i<jTable1.getRowCount();i++)          //
+{
+    sum = sum + Integer.parseInt(jTable1.getValueAt(i,4).toString());
+}
+
+txttcost.setText(String.valueOf(sum));
+
+txtpcode.setText("");
+txtpname.setText("");
+txtprice.setText("");
+txtqty.setText("");
+        } catch (SQLException ex) {
+            Logger.getLogger(sales.class.getName()).log(Level.SEVERE, null, ex);
+        }
 }
      
-     public void add()
+     
+     
+     
+     
+      public void add()
      {
         try {
             DateTimeFormatter dt = DateTimeFormatter.ofPattern("yyyy/MM/dd");
             LocalDateTime now = LocalDateTime.now();
             String date = dt.format(now);
-            String vendor = txtvendor.getSelectedItem().toString();
+            
             String subtotal = txttcost.getText();
             String pay = txtpay.getText();
             String bal = txtbal.getText();
             int lastid = 0;
             
-            String query1 = "insert into purchase (date,vendor,subtotal,pay,bal)values(?,?,?,?,?)";
+            String query1 = "insert into sales (date,subtotal,pay,bal)values(?,?,?,?)";
             pst = con.prepareStatement(query1,Statement.RETURN_GENERATED_KEYS );
             pst.setString(1, date);
-            pst.setString(2, vendor);
-            pst.setString(3, subtotal);
-            pst.setString(4, pay);
-            pst.setString(5, bal);
+            pst.setString(2, subtotal);
+            pst.setString(3, pay);
+            pst.setString(4, bal);
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
             
@@ -171,7 +187,7 @@ public  void purchase(){                                             // total fo
             if(rs.next()){
                 lastid = rs.getInt(1);
             }
-            String query2 = "insert into purchaseitem (purid,pid,rprice,qty,total)values(?,?,?,?,?)";
+            String query2 = "insert into salesproduct(id,pid,price,qty,total)values(?,?,?,?,?)";
             pst1 = con.prepareStatement(query2);
             String productid;
             String price;
@@ -195,7 +211,7 @@ public  void purchase(){                                             // total fo
               
             }
             
-            String query3 = "update product set qty = qty + ? where barcode = ?" ;
+            String query3 = "update product set qty = qty - ? where barcode = ?" ;
              pst2 = con.prepareStatement(query3);
              
              for(int i = 0; i<jTable1.getRowCount();i++) 
@@ -212,7 +228,7 @@ public  void purchase(){                                             // total fo
                  pst2.executeUpdate();
             }
             
-            JOptionPane.showMessageDialog(this, "Purchase Completedddddd....");
+            JOptionPane.showMessageDialog(this, "Sales Completedddddd....");
             
           
         } catch (SQLException ex) {
@@ -225,16 +241,7 @@ public  void purchase(){                                             // total fo
          
      }
 
-
-
-
-
-
-
-
-
-
-
+    
 
 
     /**
@@ -246,7 +253,9 @@ public  void purchase(){                                             // total fo
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jButton2 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        jButton3 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -265,15 +274,25 @@ public  void purchase(){                                             // total fo
         txtpay = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
         txtbal = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
-        txtvendor = new javax.swing.JComboBox<>();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jButton2.setText("ADD");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        jLabel1.setText("Purchase");
+        jLabel1.setText("Sales");
+
+        jButton3.setText("Close");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jPanel1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
@@ -425,23 +444,6 @@ public  void purchase(){                                             // total fo
                 .addGap(24, 24, 24))
         );
 
-        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel6.setText("Vendor");
-
-        jButton2.setText("ADD");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
-        jButton3.setText("Close");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -449,11 +451,7 @@ public  void purchase(){                                             // total fo
             .addGroup(layout.createSequentialGroup()
                 .addGap(46, 46, 46)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel6)
-                .addGap(51, 51, 51)
-                .addComponent(txtvendor, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(88, 88, 88))
+                .addGap(88, 816, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(24, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -469,17 +467,9 @@ public  void purchase(){                                             // total fo
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(37, 37, 37)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel6)
-                            .addComponent(txtvendor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(27, 27, 27))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel1)
-                        .addGap(18, 18, 18)))
+                .addGap(37, 37, 37)
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -492,38 +482,25 @@ public  void purchase(){                                             // total fo
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtpcodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtpcodeActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtpcodeActionPerformed
-
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         int pay = Integer.parseInt(txtpay.getText());
-        int subtotal = Integer.parseInt(txttcost.getText()); 
-        int bal = subtotal- pay;
-        
+        int subtotal = Integer.parseInt(txttcost.getText());
+        int bal = pay - subtotal;
+
         txtbal.setText(String.valueOf(bal));
-        
-        add();
-        
-        
-        
-        
-        
+
+       add();
+
     }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void txtpnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtpnameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtpnameActionPerformed
-
-    private void txtpayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtpayActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtpayActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        this.setVisible(false);
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void txtpcodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtpcodeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtpcodeActionPerformed
 
     private void txtpcodeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtpcodeKeyPressed
         // TODO add your handling code here:
@@ -532,11 +509,19 @@ public  void purchase(){                                             // total fo
         }
     }//GEN-LAST:event_txtpcodeKeyPressed
 
+    private void txtpnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtpnameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtpnameActionPerformed
+
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        purchase();
-        
+        sales();
+
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtpayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtpayActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtpayActionPerformed
 
     /**
      * @param args the command line arguments
@@ -555,20 +540,20 @@ public  void purchase(){                                             // total fo
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(purchase.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(sales.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(purchase.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(sales.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(purchase.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(sales.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(purchase.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(sales.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new purchase().setVisible(true);
+                new sales().setVisible(true);
             }
         });
     }
@@ -582,7 +567,6 @@ public  void purchase(){                                             // total fo
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -596,6 +580,5 @@ public  void purchase(){                                             // total fo
     private javax.swing.JTextField txtprice;
     private javax.swing.JTextField txtqty;
     private javax.swing.JTextField txttcost;
-    private javax.swing.JComboBox<String> txtvendor;
     // End of variables declaration//GEN-END:variables
 }
