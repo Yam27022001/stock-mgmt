@@ -9,8 +9,11 @@
 
 # Steps need to be followed to run this project
 
--clone the repository
+clone the repository
+
 -Download jdk 1.8
+
 -mysql-connector-java-8.0.15.jar
+
 -run the code
 
